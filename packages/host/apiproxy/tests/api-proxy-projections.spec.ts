@@ -208,6 +208,37 @@ describe('session.list projections column', () => {
     expect(row?.projections?.asOfSeq).toBe(session.seq - 1)
   })
 
+  it('lists an attached row from live projections and composition without rereading its log', async () => {
+    const { ctx, session } = await harness(true)
+    const gateway = api(ctx)
+    await new Promise(resolve => setTimeout(resolve, 0))
+    session.append('turn/start', { turn: 1 })
+    seedMessages(session, 1)
+    const lastPromptAt = session.events.at(-1)?.time
+    ctx.provide('agentPresets', {
+      composedPreset: () => 'runtime-preset',
+    } as never)
+    const events = vi.spyOn(session, 'events', 'get').mockImplementation(() => {
+      throw new Error('attached list reread the event log')
+    })
+    try {
+      const response = await gateway.sessions.list(request({}))
+      if (!response.result.ok) throw new Error('unreachable')
+      const row = response.result.value.items.find(item => item.sessionId === session.id)
+      expect(row).toMatchObject({
+        blank: false,
+        updatedAt: lastPromptAt,
+        agentPreset: 'runtime-preset',
+      })
+      expect(row?.projections?.values.sessionListMetadata).toEqual({
+        blank: false,
+        lastPromptAt,
+      })
+    } finally {
+      events.mockRestore()
+    }
+  })
+
   it('omits the column entirely when no registry is mounted', async () => {
     const { ctx, session } = await harness(false)
     seedMessages(session, 1)

@@ -40,6 +40,7 @@ function stubAgent(session: Session): Agent {
  * ship with the deployment.
  */
 function roster(ids: readonly string[], userIds: readonly string[] = []): unknown {
+  const compositions = new WeakMap<Context, string>()
   const trustOf = (id: string): 'system' | 'user' => (userIds.includes(id) ? 'user' : 'system')
   const presetOf = (id: string): object =>
     ({ id, trust: trustOf(id), path: `/presets/${id}/agent.cordis.yml` })
@@ -51,7 +52,12 @@ function roster(ids: readonly string[], userIds: readonly string[] = []): unknow
       if (!ids.includes(wanted)) return Promise.reject(new UnknownPresetError(wanted, ids))
       return Promise.resolve(presetOf(wanted))
     },
-    mount: (_ctx: Context, id?: string) => Promise.resolve(presetOf(id ?? ids[0] ?? '')),
+    mount: (agentCtx: Context, id?: string) => {
+      const mounted = id ?? ids[0] ?? ''
+      compositions.set(agentCtx, mounted)
+      return Promise.resolve(presetOf(mounted))
+    },
+    composedPreset: (agentCtx: Context) => compositions.get(agentCtx),
     // What a real mount leaves behind: a service instance only the agent that
     // mounted it can be used to address. The doubles are per agent so a test
     // can tell "this session's" from "some session's".
@@ -71,8 +77,9 @@ function roster(ids: readonly string[], userIds: readonly string[] = []): unknow
       if (!ids.includes(id)) return Promise.reject(new UnknownPresetError(id, ids))
       return Promise.resolve()
     },
-    recompose: (_ctx: Context, id: string) => {
+    recompose: (agentCtx: Context, id: string) => {
       if (!ids.includes(id)) return Promise.reject(new UnknownPresetError(id, ids))
+      compositions.set(agentCtx, id)
       return Promise.resolve({ id, trust: 'system', path: `/presets/${id}.yml` })
     },
     // The standing scope key a cold transcript read resolves presenters in.

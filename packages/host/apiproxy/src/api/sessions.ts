@@ -178,8 +178,9 @@ export interface SessionSummary {
   sessionId: SessionId
   /**
    * The later of creation and the latest human-authored prompt. Attached
-   * Sessions fold their live log; cold Sessions use a projection-cache hint or
-   * an exact small-artifact read, falling back to creation time.
+   * Sessions use their live list-metadata projection or an exact log fallback;
+   * cold Sessions use a projection-cache hint or an exact small-artifact read,
+   * falling back to creation time.
    */
   updatedAt: number
   /** Status of the attached agent; always false for cold (unattached) sessions. */
@@ -201,10 +202,12 @@ export interface SessionSummary {
   /** Session working directory (header.cwd passthrough); absent when unrecorded. */
   cwd?: string
   /**
-   * Agent preset this session's agent was composed from (header passthrough);
-   * absent when the deployment composes no presets. A surface offering a
-   * switch reads this to show what the session actually runs rather than what
-   * the deployment currently defaults to.
+   * Agent preset this session's agent was composed from. Attached Sessions use
+   * the mounted composition, with a log-derived fallback when no live roster
+   * or agent is available; cold Sessions use the header. Absent when the
+   * deployment composes no presets. A surface offering a switch reads this to
+   * show what the session actually runs rather than what the deployment
+   * currently defaults to.
    */
   agentPreset?: string
   /**

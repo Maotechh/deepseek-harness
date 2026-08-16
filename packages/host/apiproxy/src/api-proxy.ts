@@ -519,7 +519,7 @@ function applySessionListMetadata(state: SessionListMetadata, event: SessionEven
     : { blank, lastPromptAt }
 }
 
-/** Fold exact list metadata for an attached Session. */
+/** Fold exact list metadata when no projection value is available. */
 function sessionListMetadata(events: readonly SessionEvent[]): SessionListMetadata {
   let state: SessionListMetadata = { blank: true, lastPromptAt: null }
   for (const event of events) state = applySessionListMetadata(state, event)
@@ -531,17 +531,13 @@ function sessionListUpdatedAt(header: SessionHeader, metadata: SessionListMetada
   return Math.max(header.createdAt, metadata?.lastPromptAt ?? 0)
 }
 
-/** Shared Session-header projection for list baselines and creation frames. */
-function sessionListFields(header: SessionHeader, events: readonly SessionEvent[] = []): {
+/** Shared Session-header fields plus the resolved runtime preset identity. */
+function sessionListFields(header: SessionHeader, agentPreset: string | undefined): {
   parentSessionId?: SessionId
   origin?: 'subagent'
   cwd?: string
   agentPreset?: string
 } {
-  // The preset comes from the log, not the header: a session that switched
-  // while blank ran its turns under the newer composition, and a picker
-  // showing the creation-time value would contradict what the model saw.
-  const agentPreset = resolveSessionPreset({ header, events })
   return {
     ...header.parentSession === undefined ? {} : { parentSessionId: header.parentSession },
     ...header.origin === undefined ? {} : { origin: header.origin },
@@ -551,14 +547,18 @@ function sessionListFields(header: SessionHeader, events: readonly SessionEvent[
 }
 
 /** SessionSummary projection for attached (in-memory) sessions. */
-function summarize(session: Session, running: boolean): SessionSummary {
-  const metadata = sessionListMetadata(session.events)
+function summarize(
+  session: Session,
+  running: boolean,
+  metadata: SessionListMetadata,
+  agentPreset: string | undefined,
+): SessionSummary {
   return {
     sessionId: session.id,
     updatedAt: sessionListUpdatedAt(session.header, metadata),
     running,
     blank: metadata.blank,
-    ...sessionListFields(session.header, session.events),
+    ...sessionListFields(session.header, agentPreset),
   }
 }
 
@@ -619,8 +619,8 @@ async function summarizeCold(
     blank: metadata?.blank === false ? false : probed?.blank ?? false,
     // Header-only: reading the log for a blank-window preset switch would
     // defeat the same index read, and attaching the session replaces this row
-    // with `summarize()`, which resolves the switch from the events.
-    ...sessionListFields(meta),
+    // with `summarize()`, which reads the mounted composition when available.
+    ...sessionListFields(meta, meta.agentPreset),
   }
 }
 
@@ -1727,8 +1727,14 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
     const summarizeAttached = (session: Session): SessionSummary => {
       const agent = ctx.agents.get(session.id)
       const projections = listProjectionsFor(ctx, session.header, session)
+      const metadata = projections?.values.sessionListMetadata
+        ?? sessionListMetadata(session.events)
+      const presets = ctx.get('agentPresets')
+      const agentPreset = agent === undefined || presets === undefined
+        ? resolveSessionPreset(session)
+        : presets.composedPreset(agent.ctx)
       return {
-        ...summarize(session, agent?.status === 'running'),
+        ...summarize(session, agent?.status === 'running', metadata, agentPreset),
         ...projections === undefined ? {} : { projections },
       }
     }
@@ -3547,11 +3553,11 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
             queue.push(frame({
               type: 'host/session-added',
               sessionId: session.id,
-              // Derived at frame time like summarize(); a just-created session
-              // has run no turn yet, so this is constantly true in practice.
+              // A just-created session has run no turn yet, so this is
+              // constantly true in practice.
               blank: sessionBlank(session),
               // Including cwd lets the client group the new session without refreshing the list.
-              ...sessionListFields(session.header, session.events),
+              ...sessionListFields(session.header, resolveSessionPreset(session)),
             }))
           }),
           ctx.on('session/disposed', (session: Session) => {

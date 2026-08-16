@@ -12,7 +12,7 @@ Web 会话树会隐藏空白 Session，并把当前选中的空白项复用为 N
 
 ## Decision
 
-`dsh-host-apiproxy` 注册 `sessionListMetadata` 投影，其中包含 `blank` 与 `lastPromptAt`。已附加摘要直接用同一组函数折叠实时日志。`blank` 只在 `turn/start` 时从 true 单调变为 false；`lastPromptAt` 只在来源 kind 为 `user` 的 `user/message` 上更新。
+`dsh-host-apiproxy` 注册 `sessionListMetadata` 投影，其中包含 `blank` 与 `lastPromptAt`。已附加摘要读取该实时投影值；该值不可用时，改为精确折叠日志。其 preset 标识来自已挂载的 agent 组合；实时 preset 注册表或 agent 不可用时，改为从日志派生。`blank` 只在 `turn/start` 时从 true 单调变为 false；`lastPromptAt` 只在来源 kind 为 `user` 的 `user/message` 上更新。
 
 冷摘要信任缓存的 `blank: false`，因为已包含 `turn/start` 的 checkpoint 前缀会始终保持非空。缓存的 `blank: true` 和 cache miss 都无法证明当前日志为空。当 persistence 通过 `locate()` 暴露物理工件，且其观测大小不超过 `coldBlankProbeMaxBytes` 资格阈值（默认每个 Session 1 KiB）时，网关调用 `readFrom(id, 0)`，从已存前缀折叠精确列表元数据。超过阈值的文件、不提供位置的后端、已消失的工件和读取失败都产生 `blank: false`，让 Session 保持可见。
 
@@ -34,4 +34,4 @@ Web 会话树会隐藏空白 Session，并把当前选中的空白项复用为 N
 
 超过阈值的空白工件，以及来自不提供位置的后端的空白 Session 会保持可见。对于未被读取的工件，缺失或延迟的最近时间 cache 会回退到 `createdAt`。这些都是保守降级：UI 可能多显示一条空记录，或把 Session 排得偏低，但不会隐藏真实对话，也不会因为单纯打开而把会话提升到前面。
 
-网关自有投影是网关 fiber 的 effect；卸载网关会移除该 key。单元覆盖固定了临界大小资格、拒绝陈旧 true、复用单调 false、小日志精确最近时间、实时附加竞态、回退方向、真人 prompt 最近时间和 fiber 销毁。无密钥 Web snapshot 会启动发行版的压缩 JSONL 组合，在没有 cache row 的情况下播种一份小型冷空白工件，并验证侧栏不展示它。
+网关自有投影是网关 fiber 的 effect；卸载网关会移除该 key。单元覆盖固定了从实时投影与已挂载组合生成已附加列表且不读取日志、临界大小资格、拒绝陈旧 true、复用单调 false、小日志精确最近时间、实时附加竞态、回退方向、真人 prompt 最近时间和 fiber 销毁。无密钥 Web snapshot 会启动发行版的压缩 JSONL 组合，在没有 cache row 的情况下播种一份小型冷空白工件，并验证侧栏不展示它。

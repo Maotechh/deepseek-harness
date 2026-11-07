@@ -1,6 +1,6 @@
 耗材查询、入库、消耗与历史导出
 
-先使用 inventory_search 查询名称、规格、实验室、位置和状态。需要实验时间内的可用量时传入明确的 starts_at、ends_at。不得把总拥有数量当作可用数量。多种规格分别展示。历史使用 history_search，导出使用 export_inventory。查询不产生业务修改。
+先使用 inventory_search 查询名称、规格、实验室、位置和状态。需要实验时间内的可用量时传入明确的 starts_at、ends_at。不得把总拥有数量当作可用数量。多种规格分别展示。历史使用 history_search，库存导出使用 export_inventory，业务历史导出使用 export_history。导出历史时保留教师指定的名称、操作、人员和日期筛选条件。查询与导出不产生业务修改。
 
 教师明确说明实际新增入库时，查询目标物品后使用 business_preview，kind 为 stock，payload 为 item_id、action inbound、quantity 和 unit。教师报告的实际操作是登记依据，不能要求历史中已经存在同一笔入库。消耗使用 action consume。查询已确定物品且资料完整时立即生成预览，不需要重复搜索其他无关记录。实验室名称与柜子位置分开理解，A1 等位置不能作为 lab 条件。
 

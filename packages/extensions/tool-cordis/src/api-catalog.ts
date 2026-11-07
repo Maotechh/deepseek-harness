@@ -5080,6 +5080,14 @@ export const EVENT_API: readonly EventApiEntry[] = [
     parameters: [{ name: 'reloads', description: 'Replaced plugins and their module locations.' }],
   },
   {
+    name: 'lab/gateway-ready',
+    mode: 'emit',
+    signature: '\'lab/gateway-ready\'(port: number): void',
+    summary: 'The gateway is accepting loopback requests.',
+    description: 'The gateway is accepting loopback requests.',
+    parameters: [{ name: 'port', description: 'Bound port available to the local business server.' }],
+  },
+  {
     name: 'llm-pi-ai/request-headers',
     mode: 'waterfall',
     signature: '\'llm-pi-ai/request-headers\'(request: PiAiRequestHeaderContext, headers: Headers, next: () => Headers): Headers',

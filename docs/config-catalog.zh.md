@@ -1911,6 +1911,33 @@ export interface Config {
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-jobs-local -->
 
+<!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-lab-copilot -->
+<a id="deepseek-aidsh-lab-copilot"></a>
+
+## `@deepseek-ai/dsh-lab-copilot`
+
+- `inject`: `agents` · `sessions` · `sessionPersistence` · `systemPrompt` · `tools` · `speechToText` · `attachments` · `skills`
+- `source`: [`packages/experimental/lab-copilot/src/index.ts:35`](../packages/experimental/lab-copilot/src/index.ts)
+
+```ts config-catalog
+/** Local transport and model limits. */
+export interface Config {
+  /** Loopback HTTP port; zero requests an operating-system-assigned port. */
+  port: number
+  /** Loopback business-server origin for authenticated tool callbacks. */
+  callbackBase: string
+  /** Registered institution model provider identifier. */
+  provider: string
+  /** Qualified institution model identifier. */
+  model: string
+  /** Total run deadline in milliseconds, at most five minutes. */
+  maxRunMs: number
+  /** Maximum tool calls per run, including skill loading, at most forty. */
+  maxToolCalls: number
+}
+```
+<!-- END GENERATED config-catalog:@deepseek-ai/dsh-lab-copilot -->
+
 <!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-llm-deepseek-account -->
 <a id="deepseek-aidsh-llm-deepseek-account"></a>
 

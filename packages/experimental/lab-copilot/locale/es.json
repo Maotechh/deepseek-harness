@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Asistente de laboratorio",
+    "description": "Conversaciones persistentes del laboratorio, vistas previas de cambios y reconocimiento de voz local.",
+    "detail": "docs/DETAIL.md"
+  }
+}

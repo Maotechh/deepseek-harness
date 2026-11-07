@@ -1,0 +1,61 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/experimental/lab-copilot/README.md
+/:
+  en: 17503e54f9185a00
+  zh: ee4d7e5b7bd05905
+/deepseek-ai-dsh-lab-copilot:
+  en: 60f184daccebd11c
+  zh: 28cc6c7b840b8302
+/deepseek-ai-dsh-lab-copilot/summary:
+  en: 5553e295aee9bf01
+  zh: df13c5110be97e53
+/deepseek-ai-dsh-lab-copilot/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: 52d1c5cb144ee584
+/deepseek-ai-dsh-lab-copilot/use-this-package:
+  en: 1b800f756a3459a2
+  zh: 4802140e389c56ac
+/deepseek-ai-dsh-lab-copilot/understand-the-implementation:
+  en: e78869d703be7916
+  zh: 97d65a3c2b0fbc73
+/deepseek-ai-dsh-lab-copilot/further-exploration:
+  en: 951bd49df3b54c7a
+  zh: bf3da9012ef21d67
+/deepseek-ai-dsh-lab-copilot/model-experience:
+  en: 215e7ba838619b7b
+  zh: 215e7ba838619b7b
+/deepseek-ai-dsh-lab-copilot/model-experience/laboratory-instructions:
+  en: 6b96bde3eb22a7b0
+  zh: 8f775f987a64c479
+/deepseek-ai-dsh-lab-copilot/model-experience/laboratory-instructions/what-the-model-sees:
+  en: 639285166f7c3cd7
+  zh: b00ac2a6e70dfb6c
+/deepseek-ai-dsh-lab-copilot/model-experience/laboratory-instructions/what-the-model-sees/skill-loading-instruction:
+  en: 255f7901fcf6c67e
+  zh: 821b5310a8d804f9
+/deepseek-ai-dsh-lab-copilot/model-experience/laboratory-instructions/token-effect:
+  en: 9d0517339c0aa943
+  zh: f257540c8cc6dfa0
+/deepseek-ai-dsh-lab-copilot/model-experience/laboratory-instructions/kv-cache-effect:
+  en: c2ee0230576aee27
+  zh: 37f75f56d9120f51
+/deepseek-ai-dsh-lab-copilot/model-experience/business-tools:
+  en: d0a0518aabf18d6a
+  zh: 1c582183441339c6
+/deepseek-ai-dsh-lab-copilot/model-experience/business-tools/what-the-model-sees:
+  en: e54cbe6fb5b834d8
+  zh: ee1eba0dbe4dfea9
+/deepseek-ai-dsh-lab-copilot/model-experience/business-tools/token-effect:
+  en: b7b37950eb1bb006
+  zh: 9276309dd1fbb627
+/deepseek-ai-dsh-lab-copilot/model-experience/business-tools/kv-cache-effect:
+  en: f34812c2cef64aee
+  zh: 9707f820e1f4adab
+/deepseek-ai-dsh-lab-copilot/known-limitations-and-deferred-work:
+  en: 93399f26dbf9b719
+  zh: fe70929001b66676
+/deepseek-ai-dsh-lab-copilot/known-limitations-and-deferred-work/dev-note:
+  en: b7fbf1f393752f9b
+  zh: dca4b6998086b974

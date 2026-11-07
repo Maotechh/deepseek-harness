@@ -1176,4 +1176,25 @@ One session committed a different agent preset to its durable log. Consumers inv
 ```
 
 Source: [`packages/preset/agent-preset-registry/src/types.ts`](../../packages/preset/agent-preset-registry/src/types.ts)
+
+<a id="lab-events"></a>
+
+### `lab/*` events
+
+<a id="labgateway-ready--emit"></a>
+
+#### `lab/gateway-ready` — emit
+
+The gateway is accepting loopback requests.
+
+```ts cordis-catalog
+/**
+ * The gateway is accepting loopback requests.
+ * @mode emit
+ * @param port - Bound port available to the local business server.
+ */
+'lab/gateway-ready'(port: number): void
+```
+
+Source: [`packages/experimental/lab-copilot/src/index.ts`](../../packages/experimental/lab-copilot/src/index.ts)
 <!-- END GENERATED cordis-surface -->

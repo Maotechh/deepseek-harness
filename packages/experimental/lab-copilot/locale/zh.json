@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "实验室助手",
+    "description": "提供校内持久对话、业务预览工具和本地语音识别。",
+    "detail": "docs/DETAIL.zh.md"
+  }
+}
